@@ -1,13 +1,13 @@
-package com.project_name.utilities;
+package com.brite.utilities;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.time.Duration;
 
 public class Driver {
-
     //create a private constructor to remove access to this object
     private Driver(){}
 
@@ -17,7 +17,7 @@ public class Driver {
      */
     //private static WebDriver driver; // default value = null
 
-    private static InheritableThreadLocal<WebDriver> driverPool = new InheritableThreadLocal<>();
+    private static InheritableThreadLocal<WebDriver> driverPool=new InheritableThreadLocal<>();
 
     /*
     Create a re-usable utility method which will return the same driver instance once we call it.
@@ -40,13 +40,22 @@ public class Driver {
             switch (browserType){
                 case "chrome":
                     //WebDriverManager.chromedriver().setup();
-                    driverPool.set(new ChromeDriver());
+                    driverPool.set( new ChromeDriver());
                     driverPool.get().manage().window().maximize();
                     driverPool.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
                     break;
                 case "firefox":
-                    //WebDriverManager.firefoxdriver().setup();
+                    // WebDriverManager.firefoxdriver().setup();
                     driverPool.set(new FirefoxDriver());
+                    driverPool.get().manage().window().maximize();
+                    driverPool.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+                    break;
+
+                case "headless-chrome":
+                    // WebDriverManager.chromedriver().setup();
+                    ChromeOptions option = new ChromeOptions();
+                    option.addArguments("--headless=new");
+                    driverPool.set(new ChromeDriver(option));
                     driverPool.get().manage().window().maximize();
                     driverPool.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
                     break;
@@ -71,7 +80,7 @@ public class Driver {
             We assign the value back to "null" so that my "singleton" can create a newer one if needed.
              */
             driverPool.remove();
+            //driverPool.set(null);
         }
     }
-
 }
